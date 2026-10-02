@@ -1,16 +1,29 @@
-# backend/app/main.py
+from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.chat import router as chat_router
-from sqlalchemy import text
+from app.db.database import (
+    close_db,
+    connect_db,
+    get_pool,
+)
 
-from app.db.database import engine
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await connect_db()
+
+    yield
+
+    await close_db()
+
 
 app = FastAPI(
     title="Knowledge Hub Assistant API",
     version="0.1.0",
+    lifespan=lifespan,
 )
 
 
@@ -32,20 +45,23 @@ def health():
     }
 
 
+@app.get("/db-health")
+async def database_health():
+
+    db = get_pool()
+
+    result = await db.fetchval(
+        "SELECT 1"
+    )
+
+    return {
+        "database": "ok",
+        "result": result,
+    }
+
+
 app.include_router(
     chat_router,
     prefix="/api/v1",
     tags=["chat"],
 )
-
-@app.get("/db-health")
-async def database_health():
-    async with engine.connect() as connection:
-        result = await connection.execute(
-            text("SELECT 1")
-        )
-
-        return {
-            "database": "ok",
-            "result": result.scalar(),
-        }
