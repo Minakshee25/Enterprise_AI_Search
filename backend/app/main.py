@@ -4,7 +4,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.chat import router as chat_router
+from sqlalchemy import text
 
+from app.db.database import engine
 
 app = FastAPI(
     title="Knowledge Hub Assistant API",
@@ -35,3 +37,15 @@ app.include_router(
     prefix="/api/v1",
     tags=["chat"],
 )
+
+@app.get("/db-health")
+async def database_health():
+    async with engine.connect() as connection:
+        result = await connection.execute(
+            text("SELECT 1")
+        )
+
+        return {
+            "database": "ok",
+            "result": result.scalar(),
+        }
