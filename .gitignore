@@ -27,3 +27,5 @@ frontend/dist/
 # Testing
 .pytest_cache/
 .coverage
+
+backend/data/
