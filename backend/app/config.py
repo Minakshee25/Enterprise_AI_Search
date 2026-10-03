@@ -3,9 +3,6 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 
-ollama_base_url: str = (
-    "http://localhost:11434"
-)
 
 
 class Settings(BaseSettings):
@@ -18,6 +15,11 @@ class Settings(BaseSettings):
     redis_url: str
 
     tavily_api_key: str | None = None
+
+    
+    ollama_base_url: str = (
+        "http://localhost:11434"
+    )
 
     model_config = SettingsConfigDict(
         env_file=".env",

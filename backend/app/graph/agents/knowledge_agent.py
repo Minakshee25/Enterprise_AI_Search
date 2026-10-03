@@ -8,7 +8,7 @@ from app.config import settings
 
 
 llm = ChatOllama(
-    model="qwen2.5:3b"
+    model="qwen2.5:3b",
     base_url=settings.ollama_base_url,
 )
 
