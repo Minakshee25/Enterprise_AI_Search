@@ -15,7 +15,7 @@ class ChatState(TypedDict):
 
 
 llm = ChatOllama(
-    model="qwen2.5:7b"
+    model="qwen2.5:3b"
 )
 
 
