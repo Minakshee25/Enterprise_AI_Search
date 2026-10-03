@@ -3,7 +3,6 @@ from langgraph.graph.message import add_messages
 from typing import Annotated, Literal, TypedDict
 from langchain_core.messages import BaseMessage
 
-
 class ChatState(TypedDict, total=False):
     messages: Annotated[
         list[BaseMessage],
@@ -14,6 +13,8 @@ class ChatState(TypedDict, total=False):
     normalized_query: str
 
     language: str
+    requires_translation: bool
+
     intent: str
 
     route: Literal[

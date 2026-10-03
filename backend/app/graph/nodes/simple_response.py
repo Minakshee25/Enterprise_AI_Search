@@ -15,8 +15,12 @@ def simple_response(state):
         "thanks": "You're welcome.",
         "thank you": "You're welcome.",
         "bye": "Goodbye!",
-    }
 
+        "hej": "Hej! Hvordan kan jeg hjælpe?",
+        "hei": "Hei! Hvordan kan jeg hjelpe?",
+        "tak": "Velbekomme.",
+        "takk": "Bare hyggelig.",
+    }
     answer = responses.get(
         query,
         "How can I help?"

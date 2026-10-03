@@ -75,12 +75,6 @@ def knowledge_agent(state):
     )
 
     return {
-        "retrieved_chunks": chunks,
-        "messages": [
-            AIMessage(
-                content=response.content
-            )
-        ],
-        "final_answer":
-            response.content,
-    }
+    "retrieved_chunks": chunks,
+    "final_answer": response.content,
+}

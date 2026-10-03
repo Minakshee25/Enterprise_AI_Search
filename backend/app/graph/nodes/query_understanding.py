@@ -1,11 +1,4 @@
 from langchain_core.messages import HumanMessage
-from langchain_ollama import ChatOllama
-
-
-small_llm = ChatOllama(
-    model="qwen2.5:3b"
-)
-
 
 SIMPLE_MESSAGES = {
     "hi",
@@ -17,6 +10,12 @@ SIMPLE_MESSAGES = {
     "good afternoon",
     "good evening",
     "bye",
+
+    # Danish / Norwegian / Swedish basics
+    "hej",
+    "hei",
+    "takk",
+    "tak",
 }
 
 
