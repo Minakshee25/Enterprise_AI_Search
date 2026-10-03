@@ -29,3 +29,6 @@ frontend/dist/
 .coverage
 
 backend/data/
+volumes/
+embedEtcd.yaml
+user.yaml
