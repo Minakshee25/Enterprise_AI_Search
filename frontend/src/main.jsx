@@ -11,7 +11,7 @@ import {
 
 import App from "./App.jsx";
 import { msalConfig } from "./authConfig.js";
-
+import "./index.css";
 
 const msalInstance =
     new PublicClientApplication(msalConfig);
