@@ -3,7 +3,7 @@ from langchain_ollama import OllamaEmbeddings
 from app.vectorstore.milvus import milvus_client
 
 
-COLLECTION_NAME = "khub_documents"
+COLLECTION_NAME = "enterprise_documents"
 
 embeddings = OllamaEmbeddings(
     model="nomic-embed-text"
