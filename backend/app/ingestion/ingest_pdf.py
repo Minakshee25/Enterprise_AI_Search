@@ -57,6 +57,14 @@ def ingest_pdf(
             "No text chunks were extracted"
         )
 
+    document_id = chunks[0]["document_id"]
+
+    milvus_client.delete(
+        collection_name=COLLECTION_NAME,
+        filter=f'document_id == "{document_id}"',
+    )
+
+
     texts = [
         chunk["text"]
         for chunk in chunks

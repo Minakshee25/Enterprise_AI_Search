@@ -1,53 +1,124 @@
-# backend/app/graph/chat_graph.py
-
-from typing import Annotated, TypedDict
-
-from langchain_core.messages import BaseMessage
-from langchain_ollama import ChatOllama
-
-from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.graph import START, END, StateGraph
-from langgraph.graph.message import add_messages
-
-
-class ChatState(TypedDict):
-    messages: Annotated[list[BaseMessage], add_messages]
-
-
-llm = ChatOllama(
-    model="qwen2.5:3b"
+from langgraph.checkpoint.memory import (
+    InMemorySaver,
+)
+from langgraph.graph import (
+    END,
+    START,
+    StateGraph,
 )
 
+from app.graph.agents.knowledge_agent import (
+    knowledge_agent,
+)
+from app.graph.nodes.query_understanding import (
+    understand_query,
+)
+from app.graph.nodes.simple_response import (
+    simple_response,
+)
+from app.graph.nodes.supervisor import (
+    supervisor,
+)
+from app.graph.state import ChatState
 
-def chat_node(state: ChatState):
-    messages = state["messages"]
 
-    response = llm.invoke(messages)
+def after_query_understanding(state):
+    if state.get("route") == "simple":
+        return "simple_response"
+
+    return "supervisor"
+
+
+def after_supervisor(state):
+    route = state.get(
+        "route",
+        "fallback",
+    )
+
+    if route == "knowledge":
+        return "knowledge_agent"
+
+    return "fallback"
+
+
+def fallback(state):
+    from langchain_core.messages import (
+        AIMessage,
+    )
+
+    answer = (
+        "I can't handle that request "
+        "through the currently available "
+        "enterprise tools yet."
+    )
 
     return {
-        "messages": [response]
+        "messages": [
+            AIMessage(
+                content=answer
+            )
+        ],
+        "final_answer": answer,
     }
 
 
-checkpointer = InMemorySaver()
+builder = StateGraph(ChatState)
 
-graph_builder = StateGraph(ChatState)
-
-graph_builder.add_node(
-    "chat_node",
-    chat_node
+builder.add_node(
+    "query_understanding",
+    understand_query,
 )
 
-graph_builder.add_edge(
+builder.add_node(
+    "simple_response",
+    simple_response,
+)
+
+builder.add_node(
+    "supervisor",
+    supervisor,
+)
+
+builder.add_node(
+    "knowledge_agent",
+    knowledge_agent,
+)
+
+builder.add_node(
+    "fallback",
+    fallback,
+)
+
+builder.add_edge(
     START,
-    "chat_node"
+    "query_understanding",
 )
 
-graph_builder.add_edge(
-    "chat_node",
-    END
+builder.add_conditional_edges(
+    "query_understanding",
+    after_query_understanding,
 )
 
-chatbot = graph_builder.compile(
-    checkpointer=checkpointer
+builder.add_conditional_edges(
+    "supervisor",
+    after_supervisor,
+)
+
+builder.add_edge(
+    "simple_response",
+    END,
+)
+
+builder.add_edge(
+    "knowledge_agent",
+    END,
+)
+
+builder.add_edge(
+    "fallback",
+    END,
+)
+
+chatbot = builder.compile(
+    checkpointer=InMemorySaver()
 )
