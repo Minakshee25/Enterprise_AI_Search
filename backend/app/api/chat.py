@@ -12,6 +12,7 @@ from app.schemas.chat import (
     ChatMessage,
     ChatRequest,
     CreateConversationResponse,
+    ConversationSummary,
 )
 
 router = APIRouter()
@@ -52,26 +53,37 @@ async def get_conversation_messages(
     conversation_id: UUID,
     user_id: UUID = Depends(get_current_user),
 ):
-
     db = get_pool()
+
+    conversation_exists = await db.fetchval(
+        """
+        SELECT EXISTS (
+            SELECT 1
+            FROM conversations
+            WHERE id = $1
+            AND user_id = $2
+        )
+        """,
+        conversation_id,
+        user_id,
+    )
+
+    if not conversation_exists:
+        raise HTTPException(
+            status_code=404,
+            detail="Conversation not found",
+        )
 
     rows = await db.fetch(
         """
         SELECT
-            m.role,
-            m.content
-        FROM messages m
-
-        JOIN conversations c
-            ON c.id = m.conversation_id
-
-        WHERE m.conversation_id = $1
-        AND c.user_id = $2
-
-        ORDER BY m.created_at ASC
+            role,
+            content
+        FROM messages
+        WHERE conversation_id = $1
+        ORDER BY created_at ASC
         """,
         conversation_id,
-        user_id,
     )
 
     return [
@@ -87,9 +99,10 @@ async def stream_chat(
     request: ChatRequest,
     user_id: UUID = Depends(get_current_user),
 ):
-
     db = get_pool()
 
+    # Make sure this conversation exists
+    # and belongs to the currently authenticated user.
     conversation_exists = await db.fetchval(
         """
         SELECT EXISTS (
@@ -109,7 +122,7 @@ async def stream_chat(
             detail="Conversation not found",
         )
 
-    # Persist the user's message first.
+    # Save the user's message.
     await db.execute(
         """
         INSERT INTO messages (
@@ -124,6 +137,19 @@ async def stream_chat(
         request.message,
     )
 
+    # Mark this conversation as recently active.
+    await db.execute(
+        """
+        UPDATE conversations
+        SET updated_at = NOW()
+        WHERE id = $1
+        AND user_id = $2
+        """,
+        request.conversation_id,
+        user_id,
+    )
+
+    # LangGraph uses the conversation ID as its thread ID.
     config = {
         "configurable": {
             "thread_id": str(
@@ -133,7 +159,6 @@ async def stream_chat(
     }
 
     async def generate():
-
         assistant_parts = []
 
         async for message_chunk, metadata in chatbot.astream(
@@ -147,7 +172,6 @@ async def stream_chat(
             config=config,
             stream_mode="messages",
         ):
-
             if isinstance(
                 message_chunk,
                 AIMessage,
@@ -159,10 +183,12 @@ async def stream_chat(
 
                     yield content
 
+        # Combine all streamed chunks into one final assistant message.
         assistant_message = "".join(
             assistant_parts
         )
 
+        # Persist the completed assistant response.
         if assistant_message:
             db = get_pool()
 
@@ -184,3 +210,35 @@ async def stream_chat(
         generate(),
         media_type="text/plain",
     )
+
+@router.get(
+    "/conversations",
+    response_model=list[ConversationSummary],
+)
+async def list_conversations(
+    user_id: UUID = Depends(get_current_user),
+):
+    db = get_pool()
+
+    rows = await db.fetch(
+        """
+        SELECT
+            id,
+            title,
+            updated_at
+        FROM conversations
+        WHERE user_id = $1
+        ORDER BY updated_at DESC
+        """,
+        user_id,
+    )
+
+    return [
+        ConversationSummary(
+            conversation_id=row["id"],
+            title=row["title"],
+            updated_at=row["updated_at"],
+        )
+        for row in rows
+    ]
+

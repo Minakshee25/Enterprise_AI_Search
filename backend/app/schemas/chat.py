@@ -25,3 +25,11 @@ class ChatRequest(BaseModel):
 class ChatMessage(BaseModel):
     role: str
     content: str
+
+from datetime import datetime
+from uuid import UUID
+
+class ConversationSummary(BaseModel):
+    conversation_id: UUID
+    title: str
+    updated_at: datetime
