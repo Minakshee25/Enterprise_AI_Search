@@ -12,15 +12,22 @@ from app.db.database import (
     connect_db,
     get_pool,
 )
-
+from app.cache.redis import (
+    close_redis,
+    connect_redis,
+)
+from app.cache.redis import get_redis
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await connect_db()
+    await connect_redis()
 
     yield
 
+    await close_redis()
     await close_db()
+
 
 
 app = FastAPI(
@@ -67,6 +74,17 @@ async def database_health():
 
     return {
         "database": "ok",
+        "result": result,
+    }
+
+@app.get("/redis-health")
+async def redis_health():
+    redis = get_redis()
+
+    result = await redis.ping()
+
+    return {
+        "redis": "ok",
         "result": result,
     }
 

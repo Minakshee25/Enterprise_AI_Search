@@ -19,3 +19,5 @@ langdetect
 mcp
 fastmcp
 httpx
+tavily-python
+redis

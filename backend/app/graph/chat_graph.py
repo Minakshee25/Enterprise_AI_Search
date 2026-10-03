@@ -55,7 +55,9 @@ from app.graph.nodes.query_rewrite import (
     rewrite_query,
     after_retrieval_grade,
 )
-
+from app.graph.agents.web_agent import (
+    web_agent,
+)
 
 def after_query_understanding(state):
     if state.get("route") == "simple":
@@ -71,7 +73,7 @@ def after_supervisor(state):
     )
 
     if route == "knowledge":
-    return "contextualize_query"
+        return "contextualize_query"
 
     if route == "jira":
         return "jira_agent"
@@ -118,6 +120,11 @@ builder.add_node(
 builder.add_node(
     "supervisor",
     supervisor,
+)
+
+builder.add_edge(
+    "web_agent",
+    "translate_answer",
 )
 
 builder.add_node(

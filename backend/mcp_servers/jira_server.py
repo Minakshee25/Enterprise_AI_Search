@@ -23,9 +23,10 @@ def jira_auth():
 async def get_jira_issue(
     issue_key: str,
 ) -> dict:
+
     url = (
-        f"{JIRA_BASE_URL}/rest/api/3/"
-        f"issue/{issue_key}"
+        f"{JIRA_BASE_URL}"
+        f"/rest/api/3/issue/{issue_key}"
     )
 
     async with httpx.AsyncClient() as client:
@@ -33,41 +34,166 @@ async def get_jira_issue(
             url,
             auth=jira_auth(),
             headers={
-                "Accept": "application/json"
+                "Accept":
+                    "application/json"
+            },
+            params={
+                "fields":
+                    "summary,status,"
+                    "issuetype,priority,"
+                    "assignee,reporter,"
+                    "updated,description"
             },
         )
 
         response.raise_for_status()
 
-        return response.json()
+        issue = response.json()
 
+    fields = issue.get(
+        "fields",
+        {},
+    )
+
+    return {
+        "key":
+            issue.get("key"),
+
+        "summary":
+            fields.get("summary"),
+
+        "status":
+            (
+                fields
+                .get("status", {})
+                .get("name")
+            ),
+
+        "issue_type":
+            (
+                fields
+                .get("issuetype", {})
+                .get("name")
+            ),
+
+        "priority":
+            (
+                fields
+                .get("priority", {})
+                .get("name")
+                if fields.get(
+                    "priority"
+                )
+                else None
+            ),
+
+        "assignee":
+            (
+                fields
+                .get("assignee", {})
+                .get("displayName")
+                if fields.get(
+                    "assignee"
+                )
+                else None
+            ),
+
+        "updated":
+            fields.get("updated"),
+
+        "description":
+            fields.get(
+                "description"
+            ),
+    }
 
 @mcp.tool()
 async def search_jira_issues(
     jql: str,
     max_results: int = 10,
 ) -> dict:
+
     url = (
-        f"{JIRA_BASE_URL}/rest/api/3/search"
+        f"{JIRA_BASE_URL}"
+        "/rest/api/3/search/jql"
     )
 
     async with httpx.AsyncClient() as client:
         response = await client.get(
             url,
             auth=jira_auth(),
-            params={
-                "jql": jql,
-                "maxResults": max_results,
-            },
             headers={
-                "Accept": "application/json"
+                "Accept":
+                    "application/json"
+            },
+            params={
+                "jql":
+                    jql,
+
+                "maxResults":
+                    max_results,
+
+                "fields":
+                    "summary,status,"
+                    "priority,updated",
             },
         )
 
         response.raise_for_status()
 
-        return response.json()
+        data = response.json()
 
+    issues = []
 
+    for issue in data.get(
+        "issues",
+        [],
+    ):
+        fields = issue.get(
+            "fields",
+            {},
+        )
+
+        issues.append(
+            {
+                "key":
+                    issue.get("key"),
+
+                "summary":
+                    fields.get(
+                        "summary"
+                    ),
+
+                "status":
+                    (
+                        fields
+                        .get("status", {})
+                        .get("name")
+                    ),
+
+                "priority":
+                    (
+                        fields
+                        .get(
+                            "priority",
+                            {},
+                        )
+                        .get("name")
+                        if fields.get(
+                            "priority"
+                        )
+                        else None
+                    ),
+
+                "updated":
+                    fields.get(
+                        "updated"
+                    ),
+            }
+        )
+
+    return {
+        "issues": issues
+    }
 if __name__ == "__main__":
     mcp.run()
