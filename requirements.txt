@@ -15,3 +15,7 @@ pymilvus
 pypdf
 langchain-text-splitters
 langdetect
+
+mcp
+fastmcp
+httpx

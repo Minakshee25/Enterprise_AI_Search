@@ -71,7 +71,13 @@ def after_supervisor(state):
     )
 
     if route == "knowledge":
-        return "contextualize_query"
+    return "contextualize_query"
+
+    if route == "jira":
+        return "jira_agent"
+
+    if route == "web":
+        return "web_agent"
 
     return "fallback"
 
