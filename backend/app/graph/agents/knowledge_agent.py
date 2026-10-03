@@ -4,9 +4,6 @@ from langchain_core.messages import (
 )
 from langchain_ollama import ChatOllama
 
-from app.tools.knowledge import (
-    retrieve_enterprise_knowledge,
-)
 
 
 llm = ChatOllama(
@@ -15,10 +12,15 @@ llm = ChatOllama(
 
 
 def knowledge_agent(state):
+    query = state.get(
+        "contextual_query",
+        state["normalized_query"],
+    )
+
     chunks = state.get(
-    "retrieved_chunks",
-    [],
-)
+        "retrieved_chunks",
+        [],
+    )
 
     if not chunks:
         answer = (
