@@ -7,6 +7,8 @@ class Settings(BaseSettings):
     entra_tenant_id: str
     entra_api_client_id: str
 
+    milvus_uri: str
+
     model_config = SettingsConfigDict(
         env_file=".env",
         env_file_encoding="utf-8",

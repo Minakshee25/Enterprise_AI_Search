@@ -10,3 +10,7 @@ langchain-ollama
 
 asyncpg>=0.30
 PyJWT[crypto]
+
+pymilvus
+pypdf
+langchain-text-splitters

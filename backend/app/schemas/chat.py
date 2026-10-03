@@ -1,6 +1,6 @@
 from uuid import UUID
-
 from pydantic import BaseModel, Field
+from datetime import datetime
 
 
 class CreateConversationResponse(BaseModel):
@@ -26,8 +26,6 @@ class ChatMessage(BaseModel):
     role: str
     content: str
 
-from datetime import datetime
-from uuid import UUID
 
 class ConversationSummary(BaseModel):
     conversation_id: UUID
