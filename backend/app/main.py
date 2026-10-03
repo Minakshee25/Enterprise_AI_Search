@@ -1,8 +1,9 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.auth.entra import validate_access_token
 from app.api.chat import router as chat_router
 from app.db.database import (
     close_db,
@@ -37,6 +38,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/me")
+async def me(
+    claims: dict = Depends(
+        validate_access_token
+    ),
+):
+    return {
+        "oid": claims.get("oid"),
+        "tid": claims.get("tid"),
+        "name": claims.get("name"),
+        "preferred_username": claims.get(
+            "preferred_username"
+        ),
+        "scp": claims.get("scp"),
+    }
 
 @app.get("/health")
 def health():
@@ -58,7 +74,6 @@ async def database_health():
         "database": "ok",
         "result": result,
     }
-
 
 app.include_router(
     chat_router,

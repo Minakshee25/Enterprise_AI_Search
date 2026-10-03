@@ -9,3 +9,4 @@ langchain-core
 langchain-ollama
 
 asyncpg>=0.30
+PyJWT[crypto]
