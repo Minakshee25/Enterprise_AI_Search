@@ -5,12 +5,13 @@ from langchain_ollama import OllamaEmbeddings
 from app.ingestion.chunker import chunk_pages
 from app.ingestion.pdf_loader import load_pdf_pages
 from app.vectorstore.milvus import milvus_client
-
+from app.config import settings
 
 COLLECTION_NAME = "enterprise_policy_chunks"
 
 embeddings = OllamaEmbeddings(
-    model="nomic-embed-text"
+    model="nomic-embed-text",
+    base_url=settings.ollama_base_url,
 )
 
 

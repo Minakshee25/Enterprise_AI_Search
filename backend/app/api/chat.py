@@ -220,7 +220,17 @@ async def stream_chat(
             "thread_id": str(
                 request.conversation_id
             )
-        }
+        },
+        "metadata": {
+            "conversation_id": str(
+                request.conversation_id
+            ),
+            "user_id": str(user_id),
+        },
+        "tags": [
+            "enterprise-ai-search",
+            "chat",
+        ],
     }
 
     # -----------------------------------------------------

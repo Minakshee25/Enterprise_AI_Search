@@ -21,3 +21,5 @@ fastmcp
 httpx
 tavily-python
 redis
+
+langsmith

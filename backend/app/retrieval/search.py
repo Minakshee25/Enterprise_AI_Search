@@ -1,4 +1,5 @@
 from langchain_ollama import OllamaEmbeddings
+from app.config import settings
 
 from app.vectorstore.milvus import milvus_client
 
@@ -7,7 +8,8 @@ COLLECTION_NAME = "enterprise_policy_chunks"
 
 
 embeddings = OllamaEmbeddings(
-    model="nomic-embed-text"
+    model="nomic-embed-text",
+    base_url=settings.ollama_base_url,
 )
 
 

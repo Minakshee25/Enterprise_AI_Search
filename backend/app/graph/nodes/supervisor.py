@@ -1,9 +1,10 @@
 from langchain_core.messages import HumanMessage
 from langchain_ollama import ChatOllama
-
+from app.config import settings
 
 router_llm = ChatOllama(
-    model="qwen2.5:3b"
+    model="qwen2.5:3b",
+    base_url=settings.ollama_base_url
 )
 
 

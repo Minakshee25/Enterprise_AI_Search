@@ -3,6 +3,10 @@ from pydantic_settings import (
     SettingsConfigDict,
 )
 
+ollama_base_url: str = (
+    "http://localhost:11434"
+)
+
 
 class Settings(BaseSettings):
     database_url: str

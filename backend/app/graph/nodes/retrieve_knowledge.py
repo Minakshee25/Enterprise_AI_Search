@@ -5,7 +5,11 @@ from app.cache.retrieval_cache import (
 from app.tools.knowledge import (
     retrieve_enterprise_knowledge,
 )
+from langsmith import traceable
 
+@traceable(
+    name="retrieve_knowledge"
+)
 
 async def retrieve_knowledge(state):
     query = state.get(

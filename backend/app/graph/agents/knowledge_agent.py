@@ -3,11 +3,13 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_ollama import ChatOllama
+from app.config import settings
 
 
 
 llm = ChatOllama(
     model="qwen2.5:3b"
+    base_url=settings.ollama_base_url,
 )
 
 
