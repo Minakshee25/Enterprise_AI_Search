@@ -1,5 +1,6 @@
 from langchain_core.messages import HumanMessage
 
+
 SIMPLE_MESSAGES = {
     "hi",
     "hello",
@@ -32,7 +33,9 @@ def understand_query(state):
     ]
 
     query = (
-        user_messages[-1].content.strip()
+        user_messages[-1]
+        .content
+        .strip()
     )
 
     normalized = query.lower()
@@ -46,9 +49,13 @@ def understand_query(state):
             "route": "simple",
         }
 
+    # IMPORTANT:
+    # Explicitly overwrite route from the
+    # previous LangGraph turn.
     return {
         "original_query": query,
         "normalized_query": query,
         "language": "en",
         "intent": "unknown",
+        "route": "fallback",
     }

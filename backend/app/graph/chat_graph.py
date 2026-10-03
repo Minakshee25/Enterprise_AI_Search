@@ -158,11 +158,6 @@ builder.add_edge(
     END,
 )
 
-builder.add_edge(
-    "fallback",
-    END,
-)
-
 chatbot = builder.compile(
     checkpointer=InMemorySaver()
 )
