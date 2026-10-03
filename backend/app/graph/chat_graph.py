@@ -122,6 +122,11 @@ builder.add_node(
     supervisor,
 )
 
+builder.add_node(
+    "web_agent",
+    web_agent,
+)
+
 builder.add_edge(
     "web_agent",
     "translate_answer",
