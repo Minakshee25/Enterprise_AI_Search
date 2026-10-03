@@ -20,13 +20,23 @@ from app.graph.nodes.supervisor import (
     supervisor,
 )
 from app.graph.state import ChatState
+from app.graph.nodes.language import (
+    detect_input_language,
+)
+from app.graph.nodes.translation import (
+    translate_answer,
+    translate_to_english,
+)
+from app.graph.nodes.final_response import (
+    final_response,
+)
 
 
 def after_query_understanding(state):
     if state.get("route") == "simple":
         return "simple_response"
 
-    return "supervisor"
+    return "detect_language"
 
 
 def after_supervisor(state):
@@ -42,23 +52,12 @@ def after_supervisor(state):
 
 
 def fallback(state):
-    from langchain_core.messages import (
-        AIMessage,
-    )
-
-    answer = (
-        "I can't handle that request "
-        "through the currently available "
-        "enterprise tools yet."
-    )
-
     return {
-        "messages": [
-            AIMessage(
-                content=answer
-            )
-        ],
-        "final_answer": answer,
+        "final_answer": (
+            "I can't handle that request "
+            "through the currently available "
+            "enterprise tools yet."
+        )
     }
 
 
@@ -89,6 +88,26 @@ builder.add_node(
     fallback,
 )
 
+builder.add_node(
+    "detect_language",
+    detect_input_language,
+)
+
+builder.add_node(
+    "translate_to_english",
+    translate_to_english,
+)
+
+builder.add_node(
+    "translate_answer",
+    translate_answer,
+)
+
+builder.add_node(
+    "final_response",
+    final_response,
+)
+
 builder.add_edge(
     START,
     "query_understanding",
@@ -97,6 +116,16 @@ builder.add_edge(
 builder.add_conditional_edges(
     "query_understanding",
     after_query_understanding,
+)
+
+builder.add_edge(
+    "detect_language",
+    "translate_to_english",
+)
+
+builder.add_edge(
+    "translate_to_english",
+    "supervisor",
 )
 
 builder.add_conditional_edges(
@@ -111,6 +140,21 @@ builder.add_edge(
 
 builder.add_edge(
     "knowledge_agent",
+    "translate_answer",
+)
+
+builder.add_edge(
+    "fallback",
+    "translate_answer",
+)
+
+builder.add_edge(
+    "translate_answer",
+    "final_response",
+)
+
+builder.add_edge(
+    "final_response",
     END,
 )
 

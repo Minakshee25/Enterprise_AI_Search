@@ -1,5 +1,5 @@
 from langchain_core.messages import (
-    AIMessage,
+    HumanMessage,
     SystemMessage,
 )
 from langchain_ollama import ChatOllama
@@ -31,11 +31,6 @@ def knowledge_agent(state):
 
         return {
             "retrieved_chunks": [],
-            "messages": [
-                AIMessage(
-                    content=answer
-                )
-            ],
             "final_answer": answer,
         }
 
@@ -70,11 +65,13 @@ def knowledge_agent(state):
     response = llm.invoke(
         [
             system_message,
-            *state["messages"],
+            HumanMessage(
+                content=query
+            ),
         ]
     )
 
     return {
-    "retrieved_chunks": chunks,
-    "final_answer": response.content,
-}
+        "retrieved_chunks": chunks,
+        "final_answer": response.content,
+    }
