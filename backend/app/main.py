@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from uuid import UUID
 
 from app.auth.user import get_current_user
-from app.auth.entra import validate_access_token
 from app.api.chat import router as chat_router
 from app.db.database import (
     close_db,
@@ -49,21 +48,6 @@ async def me(
         "user_id": user_id
     }
 
-# @app.get("/me")
-# async def me(
-#     claims: dict = Depends(
-#         validate_access_token
-#     ),
-# ):
-#     return {
-#         "oid": claims.get("oid"),
-#         "tid": claims.get("tid"),
-#         "name": claims.get("name"),
-#         "preferred_username": claims.get(
-#             "preferred_username"
-#         ),
-#         "scp": claims.get("scp"),
-#     }
 
 @app.get("/health")
 def health():

@@ -1,6 +1,5 @@
 from uuid import UUID, uuid4
 
-from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi import APIRouter, Depends, HTTPException
 from app.auth.user import get_current_user
