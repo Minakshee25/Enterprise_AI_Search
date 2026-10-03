@@ -30,6 +30,9 @@ from app.graph.nodes.translation import (
 from app.graph.nodes.final_response import (
     final_response,
 )
+from app.graph.nodes.query_rewrite import (
+    after_retrieval_grade
+)
 
 
 def after_query_understanding(state):
@@ -136,6 +139,26 @@ builder.add_conditional_edges(
 builder.add_edge(
     "simple_response",
     END,
+)
+
+builder.add_edge(
+    "contextualize_query",
+    "retrieve_knowledge",
+)
+
+builder.add_edge(
+    "retrieve_knowledge",
+    "retrieval_grader",
+)
+
+builder.add_conditional_edges(
+    "retrieval_grader",
+    after_retrieval_grade,
+)
+
+builder.add_edge(
+    "rewrite_query",
+    "retrieve_knowledge",
 )
 
 builder.add_edge(

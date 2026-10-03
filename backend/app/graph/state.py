@@ -30,3 +30,10 @@ class ChatState(TypedDict, total=False):
     final_answer: str
 
     error: str | None
+
+    contextual_query: str
+
+    retrieval_score: float | None
+    retrieval_quality: str
+
+    retrieval_retry_count: int

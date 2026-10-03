@@ -15,12 +15,10 @@ llm = ChatOllama(
 
 
 def knowledge_agent(state):
-    query = state["normalized_query"]
-
-    chunks = retrieve_enterprise_knowledge(
-        query=query,
-        top_k=5,
-    )
+    chunks = state.get(
+    "retrieved_chunks",
+    [],
+)
 
     if not chunks:
         answer = (
