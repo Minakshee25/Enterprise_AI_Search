@@ -16,6 +16,6 @@ export const msalConfig = {
 
 export const loginRequest = {
     scopes: [
-        import.meta.env.VITE_KHUB_API_SCOPE
+        import.meta.env.VITE_AIASSISTANT_API_SCOPE
     ],
 };

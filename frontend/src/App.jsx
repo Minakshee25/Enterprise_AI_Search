@@ -262,10 +262,10 @@ function App() {
         return (
             <div className="login-page">
                 <div className="login-card">
-                    <h1>KHub</h1>
+                    <h1>AIassistant</h1>
 
                     <p>
-                        Enterprise Knowledge Hub
+                        Enterprise AI Assistant
                     </p>
 
                     <button onClick={signIn}>
@@ -283,7 +283,7 @@ function App() {
             <aside className="sidebar">
 
                 <div className="sidebar-header">
-                    <h2>KHub</h2>
+                    <h2>AIassistant</h2>
                 </div>
 
                 <button
@@ -351,7 +351,7 @@ function App() {
                     {messages.length === 0 && (
                         <div className="welcome">
                             <h1>
-                                How can KHub help?
+                                How can AIassistant help?
                             </h1>
 
                             <p>
@@ -399,7 +399,7 @@ function App() {
                             handleKeyDown
                         }
 
-                        placeholder="Ask KHub about a policy..."
+                        placeholder="Ask AIassistant about a policy..."
 
                         disabled={loading}
                     />

@@ -50,16 +50,3 @@ ON conversations(user_id);
 CREATE INDEX IF NOT EXISTS idx_messages_conversation_id
 ON messages(conversation_id);
 
-
--- Temporary user until Entra authentication is connected
-INSERT INTO users (
-    id,
-    email,
-    display_name
-)
-VALUES (
-    '00000000-0000-0000-0000-000000000001',
-    'dev@khub.local',
-    'Development User'
-)
-ON CONFLICT (id) DO NOTHING;

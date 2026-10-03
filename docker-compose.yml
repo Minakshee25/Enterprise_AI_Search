@@ -1,11 +1,11 @@
 services:
   postgres:
     image: postgres:16
-    container_name: khub-postgres
+    container_name: aiassistant-postgres
     environment:
-      POSTGRES_DB: khub
-      POSTGRES_USER: khub
-      POSTGRES_PASSWORD: khub_dev_password
+      POSTGRES_DB: aiassistant
+      POSTGRES_USER: aiassistant
+      POSTGRES_PASSWORD: aiassistant_dev_password
     ports:
       - "5433:5432"
     volumes:
