@@ -6,10 +6,9 @@ from app.vectorstore.milvus import milvus_client
 COLLECTION_NAME = "enterprise_documents"
 
 embeddings = OllamaEmbeddings(
-    model="nomic-embed-text",
-    base_url=settings.ollama_base_url,
+    model=settings.embedding_model,
+    base_url=settings.embedding_base_url,
 )
-
 
 def main():
 

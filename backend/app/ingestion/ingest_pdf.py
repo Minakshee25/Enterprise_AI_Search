@@ -10,8 +10,8 @@ from app.config import settings
 COLLECTION_NAME = "enterprise_policy_chunks"
 
 embeddings = OllamaEmbeddings(
-    model="nomic-embed-text",
-    base_url=settings.ollama_base_url,
+    model=settings.embedding_model,
+    base_url=settings.embedding_base_url,
 )
 
 

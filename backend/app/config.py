@@ -30,5 +30,8 @@ class Settings(BaseSettings):
         env_file_encoding="utf-8",
     )
 
+    embedding_model: str = "nomic-embed-text"
+    embedding_base_url: str = "http://localhost:11434"
+
 
 settings = Settings()
