@@ -1,11 +1,15 @@
 from langchain_core.messages import HumanMessage
 from langchain_ollama import ChatOllama
+from app.models.llm import get_llm
 from app.config import settings
 
-router_llm = ChatOllama(
-    model="qwen2.5:3b",
-    base_url=settings.ollama_base_url
-)
+# router_llm = ChatOllama(
+#     model="qwen2.5:3b",
+#     base_url=settings.ollama_base_url
+# )
+
+router_llm = get_llm()
+
 
 
 def supervisor(state):

@@ -3,6 +3,7 @@ from langchain_core.messages import (
     SystemMessage,
 )
 from langchain_ollama import ChatOllama
+from app.models.llm import get_llm
 
 from app.tools.web_search import (
     search_web,
@@ -10,11 +11,12 @@ from app.tools.web_search import (
 from app.config import settings
 
 
-llm = ChatOllama(
-    model="qwen2.5:3b",
-    base_url=settings.ollama_base_url,
-)
+# llm = ChatOllama(
+#     model="qwen2.5:3b",
+#     base_url=settings.ollama_base_url,
+# )
 
+llm = get_llm()
 
 def web_agent(state):
     query = state.get(
